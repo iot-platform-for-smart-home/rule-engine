@@ -1,0 +1,8 @@
+server:
+    port: 8600
+
+spring:
+  application:
+    name: RestfulPlugin
+  profiles:
+    active: prod

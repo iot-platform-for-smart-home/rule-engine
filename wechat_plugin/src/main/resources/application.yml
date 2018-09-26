@@ -1,0 +1,40 @@
+server:
+    port: 8900
+
+spring:
+  application:
+    name: WechatPlugin
+  profiles:
+    active: prod
+  datasource:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://39.104.165.155:3306/BUPT_IOT?characterEncoding=UTF-8
+    username: root
+    password: root
+    cachePrepStmts: true #开启二级缓存
+
+mybatis:
+  configuration:
+    cache-enabled: true
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: false
+    mutiple-result-sets-enabled: true
+    default-executor-type: reuse
+    default-statement-type: 25000
+  type-aliases-package:  com.bupt.wechatplugin.domain   # 指向实体包路径
+  mapperLocations:  # classpath路径下的maapper包,扫描 xml 文件
+
+
+wechat:
+  appId: "wxbf4262ec5dbda8c7"
+  appSecret: "c383d9ce8e7f0d15d6cdd222bb07e866"
+  token: 'weixin'
+  aesKey: "nUAj1trYmZWDHxf1AcW545ZLuaOSTTz5hivsTzacYUj"
+  access_token_url: "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET"
+  message_text: "text"
+  messaage_event: "event"
+  text_color: "#DC143C"
+  template_send_url: "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN"
+  templateId: "2yF5SaZYPwPF1SdTAdezOFf3938LHa2Jtme5KyKsB1I"
+
+

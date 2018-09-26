@@ -1,0 +1,66 @@
+server:
+    port: 8200
+
+spring:
+  application:
+    name: smart_ruler
+  profiles:
+    active: prod
+
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://39.104.165.155:3306/BUPT_IOT?characterEncoding=UTF-8   #jdbc:mysql://localhost:3306/dbgirl_test?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    username: root
+    password: root
+
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: create-drop
+
+  kafka:
+    producer:
+      retries: 0
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      bootstrap-servers: 172.30.26.7:9092,172.30.24.9:9092,172.30.26.10:9092  # k8s
+      bootstrap-servers: kafka-service:9092  # 阿里云
+    consumer:
+#      bootstrap-servers: 172.30.26.7:9092,172.30.24.9:9092,172.30.26.10:9092  # k8s
+      bootstrap-servers: kafka-service:9092  # 阿里云
+      group-id: -1
+      enable-auto-commit: true
+      auto-commit-interval: 100
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+
+mybatis:
+  configuration:
+    cache-enabled: true
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: false
+    multiple-result-sets-enabled: true
+    default-executor-type: reuse
+    default-statement-timeout: 25000
+  type-aliases-package: org.spring.springboot.domain
+  type-handlers-package: com.tjlcast.server.typeHandler
+
+
+zookeeper:
+  address: zookeeper-service:2181 # 阿里云 zk地址
+#  address: 172.30.26.7:2181,172.30.24.9:2181,172.30.26.10:2181
+#  address: zookeeper
+
+account:
+  host: account
+  port: 8400
+  check_url: http://account:8400/api/v1/account/check_token
+  login_url: http://account:8400/api/v1/account/login
+  client_id: client_2
+  client_secret: 123456
+  internal_client_id: client_1
+  internal_client_secret: 123456
