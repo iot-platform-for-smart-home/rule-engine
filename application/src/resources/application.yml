@@ -9,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://39.104.165.155:3306/BUPT_IOT?characterEncoding=UTF-8   #jdbc:mysql://localhost:3306/dbgirl_test?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    url: jdbc:mysql://10.108.218.108:3306/BUPT_IOT?characterEncoding=UTF-8   #jdbc:mysql://localhost:3306/dbgirl_test?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
     username: root
-    password: root
+    password: 123
 
   jpa:
     properties:
@@ -55,12 +55,12 @@ zookeeper:
 #  address: 172.30.26.7:2181,172.30.24.9:2181,172.30.26.10:2181
 #  address: zookeeper
 
-account:
-  host: account
-  port: 8400
-  check_url: http://account:8400/api/v1/account/check_token
-  login_url: http://account:8400/api/v1/account/login
-  client_id: client_2
-  client_secret: 123456
-  internal_client_id: client_1
-  internal_client_secret: 123456
+#account:
+#  host: account
+#  port: 8400
+#  check_url: http://account:8400/api/v1/account/check_token
+#  login_url: http://account:8400/api/v1/account/login
+#  client_id: client_2
+#  client_secret: 123456
+#  internal_client_id: client_1
+#  internal_client_secret: 123456

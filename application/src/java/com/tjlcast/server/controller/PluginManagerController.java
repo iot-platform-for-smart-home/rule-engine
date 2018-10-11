@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,7 +29,7 @@ public class PluginManagerController {
     private SimpMessagingTemplate simpMessagingTemplate ;
 
     @ApiOperation(value = "todo ***")
-    @PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
+    //@PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public List<Plugin> getAllPlugins() {
@@ -39,7 +38,7 @@ public class PluginManagerController {
 
 
     @ApiOperation(value = "todo ***")
-    @PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
+    //@PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
     @RequestMapping(value = "/state/{url}/{port}", method = RequestMethod.GET)
     @ResponseBody
     public String getPluginState(@PathVariable("url") String url,@PathVariable("port") String port) throws IOException {
@@ -48,7 +47,7 @@ public class PluginManagerController {
 
 
     @ApiOperation(value = "todo ***")
-    @PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('SYS_ADMIN')")
+    //@PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('SYS_ADMIN')")
     @RequestMapping(value = "/active/{url}/{port}", method = RequestMethod.POST)
     @ResponseBody
     public String activate(@PathVariable("url") String url, @PathVariable("port") String port) throws IOException {
@@ -57,21 +56,21 @@ public class PluginManagerController {
 
 
     @ApiOperation(value = "todo ***")
-    @PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('SYS_ADMIN')")
+    //@PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('SYS_ADMIN')")
     @RequestMapping(value = "/suspend/{url}/{port}", method = RequestMethod.POST)
     @ResponseBody
     public String suspend(@PathVariable("url") String url, @PathVariable("port") String port) throws IOException {
         return pluginManagerService.suspend(url, port) ;
     }
 
-    @PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
+   // @PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
     @RequestMapping(value = "/metrics/{url}/{port}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public String pluginMetrics(@PathVariable("url") String url, @PathVariable("port") String port) throws IOException {
         return pluginManagerService.metrics(url, port) ;
     }
 
-    @PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
+    //@PreAuthorize("#oauth2.hasScope('all') OR isAuthenticated()")
     @RequestMapping(value = "/allUrls/{url}/{port}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public String pluginRPCUrls(@PathVariable("url") String url, @PathVariable("port") String port) throws IOException {
