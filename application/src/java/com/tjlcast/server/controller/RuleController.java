@@ -106,7 +106,7 @@ public class RuleController extends BaseContoller {
         return "Suspend" ;
     }
 
-    //暂停客户下所有的报警规则
+    //暂停网关下所有的报警规则
     @RequestMapping(value = "/alarmRule/suspend/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public String suspendAlarmRule(@PathVariable("gatewayId") String gatewayId){
@@ -118,7 +118,19 @@ public class RuleController extends BaseContoller {
         return "SuspendAllRule";
     }
 
-    //获取客户下所有的报警规则
+    //激活网关下所有的报警规则
+    @RequestMapping(value = "/alarmRule/activate/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public String activateAlarmRule(@PathVariable("gatewayId") String gatewayId){
+        List<Rule> rules = ruleService.findGatewayAlarmRule(gatewayId);
+        for(Rule rule: rules){
+            ruleService.setRuleActive(rule.getRuleId());
+            ifRuleDeleteOrChange(rule);
+        }
+        return "ActivateAllRule";
+    }
+
+    //获取网关下所有的报警规则
     @RequestMapping(value = "/alarmRule/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public List<RuleCreation> getAlarmRules(@PathVariable("gatewayId")String gatewayId){
