@@ -3,6 +3,7 @@ package com.tjlcast.server.data_source;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tjlcast.server.aware.DeviceAwareMsg;
+import com.tjlcast.server.aware.GatewayAwareMsg;
 import com.tjlcast.server.aware.TenantAwareMsg;
 import lombok.Data;
 
@@ -14,11 +15,12 @@ import java.util.List;
  * Created by tangjialiang on 2018/4/22.
  */
 @Data
-public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, Serializable {
+public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, GatewayAwareMsg, DeviceAwareMsg, Serializable {
 
     private final JsonObject jsonObj ;  // optional
     private final String deviceId ;     // required
     private final Integer tenantId ;    // required
+    private final String gatewayId;   // required
     private final String deviceType;    // optional
     private final String name;
     private final String manufacture;
@@ -31,6 +33,7 @@ public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, 
         this.jsonObj = jsonObj ;
         this.deviceId = jsonObj.get("deviceId").getAsString() ;
         this.tenantId = Integer.valueOf(jsonObj.get("tenantId").getAsString()) ;
+        this.gatewayId = jsonObj.get("gatewayId").getAsString();
         this.deviceType = jsonObj.get("deviceType").getAsString();
         this.name = jsonObj.get("name").getAsString();
         this.manufacture = jsonObj.get("manufacture").getAsString();
@@ -48,6 +51,11 @@ public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, 
     }
 
     @Override
+    public String getGatewayId() {
+        return this.gatewayId ;
+    }
+
+    @Override
     public String getDeviceId() {
         return this.deviceId ;
     }
@@ -55,6 +63,7 @@ public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, 
     public static class Builder {
         String deviceId ;
         int tenantId ;
+        String gatewayId;
 
         JsonObject jsonObj = new JsonObject();  // todo
         String deviceType = "default";          // todo
@@ -63,8 +72,9 @@ public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, 
         String model = "default";
         List<Item> items = new LinkedList<>();  // todo
 
-        public Builder(int tenantId, String deviceId) {
+        public Builder(int tenantId, String gatewayId, String deviceId) {
             this.deviceId = deviceId ;
+            this.gatewayId = gatewayId;
             this.tenantId = tenantId ;
         }
 
@@ -105,6 +115,7 @@ public class FromMsgMiddlerDeviceMsg implements TenantAwareMsg, DeviceAwareMsg, 
         this.jsonObj = builder.jsonObj ;
         this.deviceId = builder.deviceId ;
         this.tenantId = builder.tenantId ;
+        this.gatewayId = builder.gatewayId;
         this.deviceType = builder.deviceType ;
         this.name = builder.name;
         this.manufacture = builder.manufacture;

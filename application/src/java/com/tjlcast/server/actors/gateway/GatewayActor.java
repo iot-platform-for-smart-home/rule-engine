@@ -1,4 +1,4 @@
-package com.tjlcast.server.actors.tenant;
+package com.tjlcast.server.actors.gateway;
 
 
 import akka.actor.ActorRef;
@@ -23,17 +23,17 @@ import java.util.Map;
  *
  */
 
-public class TenantActor extends ContextAwareActor {
+public class GatewayActor extends ContextAwareActor {
 
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this) ;
 
-    private final Integer tenantId ;
+    private final String gatewayId ;
     private final Map<Integer, ActorRef> ruleActors ;
 
-    public TenantActor(ActorSystemContext context, Integer tenantId) {
+    public GatewayActor(ActorSystemContext context, String gatewayId) {
         super(context) ;
-        this.tenantId = tenantId;
-        List<Rule> rules= systemContext.getRuleService().findRuleByTenantId(tenantId);
+        this.gatewayId = gatewayId;
+        List<Rule> rules= systemContext.getRuleService().findRuleByGatewayId(gatewayId);
         ruleActors = new HashMap<Integer, ActorRef>() ;
         for  (Rule rule : rules)
         {
@@ -43,9 +43,9 @@ public class TenantActor extends ContextAwareActor {
         }
     }
 
-    public void initialTenantActor() {
+    public void initialGatewayActor() {
         // todo
-        // load the rule of this tenant.
+        // load the rule of this gateway.
     }
 
     @Override
@@ -68,24 +68,24 @@ public class TenantActor extends ContextAwareActor {
     private ActorRef getOrCreateRuleActor(final Integer ruleId) {
         return ruleActors.computeIfAbsent(
                 ruleId,
-                k -> context().actorOf(Props.create(new RuleActor.ActorCreator(systemContext, tenantId, ruleId)).withDispatcher(DefaultActorService.CORE_DISPATCHER_NAME),
+                k -> context().actorOf(Props.create(new RuleActor.ActorCreator(systemContext, gatewayId, ruleId)).withDispatcher(DefaultActorService.CORE_DISPATCHER_NAME),
                         ruleId.toString())
         ) ;
     }
 
-    public static class ActorCreator extends ContextBasedCreator<TenantActor> {
+    public static class ActorCreator extends ContextBasedCreator<GatewayActor> {
         private static final long serialVersionUID = 1L ;
 
-        private final Integer tenantId ;
+        private final String gatewayId ;
 
-        public ActorCreator(ActorSystemContext context, Integer tenantId) {
+        public ActorCreator(ActorSystemContext context, String gatewayId) {
             super(context);
-            this.tenantId = tenantId ;
+            this.gatewayId = gatewayId ;
         }
 
         @Override
-        public TenantActor create() throws  Exception {
-            return new TenantActor(context, tenantId) ;
+        public GatewayActor create() throws  Exception {
+            return new GatewayActor(context, gatewayId) ;
         }
     }
 }

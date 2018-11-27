@@ -10,10 +10,10 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.Function;
 import com.tjlcast.server.actors.ActorSystemContext;
+import com.tjlcast.server.actors.gateway.GatewayActor;
 import com.tjlcast.server.actors.service.ContextAwareActor;
 import com.tjlcast.server.actors.service.ContextBasedCreator;
 import com.tjlcast.server.actors.service.DefaultActorService;
-import com.tjlcast.server.actors.tenant.TenantActor;
 import com.tjlcast.server.data.Rule;
 import com.tjlcast.server.data_source.FromMsgMiddlerDeviceMsg;
 import com.tjlcast.server.message.DeviceRecognitionMsg;
@@ -32,11 +32,11 @@ public class AppActor extends ContextAwareActor {
 
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this) ;
 
-    private final Map<Integer, ActorRef> tenantActors ;
+    private final Map<String, ActorRef> gatewayActors ;
 
     public AppActor(ActorSystemContext systemContext) {
         super(systemContext) ;
-        this.tenantActors = new HashMap<>() ;
+        this.gatewayActors = new HashMap<>() ;
     }
 
     @Override
@@ -49,15 +49,15 @@ public class AppActor extends ContextAwareActor {
             //getOrCreateTenantActor(tenantId).tell(message,ActorRef.noSender());
         } else if (message instanceof FromMsgMiddlerDeviceMsg) {
             FromMsgMiddlerDeviceMsg mmessage = (FromMsgMiddlerDeviceMsg) message;
-            Integer tenantId = mmessage.getTenantId();
-            ActorRef orCreateTenantActor = getOrCreateTenantActor(tenantId);
-            orCreateTenantActor.tell(message,ActorRef.noSender()) ;
+            String gatewayId = mmessage.getGatewayId();
+            ActorRef orCreateGatewayActor = getOrCreateGatewayActor(gatewayId);
+            orCreateGatewayActor.tell(message,ActorRef.noSender()) ;
         } else if (message instanceof Rule){
             Rule rule =(Rule)message;
-            if(tenantActors.containsKey(rule.getTenantId())) {
-                getContext().stop(tenantActors.get(rule.getTenantId()));
-                Integer tenantId = rule.getTenantId();
-                this.tenantActors.remove(tenantId);
+            if(gatewayActors.containsKey(rule.getGatewayId())) {
+                getContext().stop(gatewayActors.get(rule.getGatewayId()));
+                String gatewayId = rule.getGatewayId();
+                this.gatewayActors.remove(gatewayId);
             }
         }
     }
@@ -72,10 +72,10 @@ public class AppActor extends ContextAwareActor {
         super.preStart();
     }
 
-    private ActorRef getOrCreateTenantActor(final Integer tenantId) {
-        return tenantActors.computeIfAbsent(tenantId,
-                k -> context().actorOf(Props.create(new TenantActor.ActorCreator(systemContext, tenantId)).withDispatcher(DefaultActorService.CORE_DISPATCHER_NAME),
-                        tenantId.toString()));
+    private ActorRef getOrCreateGatewayActor(final String gatewayId) {
+        return gatewayActors.computeIfAbsent(gatewayId,
+                k -> context().actorOf(Props.create(new GatewayActor.ActorCreator(systemContext, gatewayId)).withDispatcher(DefaultActorService.CORE_DISPATCHER_NAME),
+                        gatewayId));
     }
 
     // for creating the AppActor

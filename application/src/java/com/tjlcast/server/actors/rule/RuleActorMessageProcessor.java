@@ -133,7 +133,7 @@ public class RuleActorMessageProcessor extends AbstractContextAwareMsgProcessor 
                 break;
             }
         }
-
+        System.out.println(result);
         return result;
     }
 
@@ -150,8 +150,12 @@ public class RuleActorMessageProcessor extends AbstractContextAwareMsgProcessor 
             checkRequestbody = checkRequestbody.replaceAll("\\{deviceId\\}", msg.getDeviceId());
         }
 
-        if(checkRequestbody.contains("{tenantId}")){
+       /* if(checkRequestbody.contains("{tenantId}")){
             checkRequestbody = checkRequestbody.replaceAll("\\{tenantId\\}", msg.getTenantId().toString());
+        }*/
+
+        if(checkRequestbody.contains("{gatewayId}")){
+            checkRequestbody = checkRequestbody.replaceAll("\\{gatewayId\\}", msg.getGatewayId());
         }
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8")

@@ -19,7 +19,7 @@ public class TenantController extends BaseContoller {
     public String addTenant(@RequestBody String jsonStr) {
         // todo
         // 1. decode jsonStr to be a Tenant obj
-        // 2. add a tenant.
+        // 2. add a gateway.
         return "OK" ;
     }
 
@@ -28,7 +28,7 @@ public class TenantController extends BaseContoller {
     @ResponseBody
     public String deleteTenant(@RequestParam String idStr) {
         // todo
-        // 2. remove a tenant.
+        // 2. remove a gateway.
         return "Ok" ;
     }
 }
