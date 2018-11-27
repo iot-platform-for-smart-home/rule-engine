@@ -18,18 +18,20 @@ public class RuleActor extends ContextAwareActor {
 
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this) ;
 
-    private final Integer tenantId ;
+//    private final Integer tenantId ;
+    private final String gatewayId;
     private final Integer ruleId ;
     private final RuleActorMessageProcessor processor;
     public final List<Filter> filters; // todo
 
 
-    private RuleActor(ActorSystemContext context, Integer tenantId, Integer ruleId) {
+    private RuleActor(ActorSystemContext context,String gatewayId, Integer ruleId) {
         super(context) ;
-        this.tenantId = tenantId ;
+//        this.tenantId = tenantId ;
+        this.gatewayId = gatewayId;
         this.ruleId = ruleId ;
         this.processor = new RuleActorMessageProcessor(systemContext, logger, ruleId, this);
-        this.filters=systemContext.getFilterService().findFilterByRuleId(ruleId);
+        this.filters = systemContext.getFilterService().findFilterByRuleId(ruleId);
     }
 
     @Override
@@ -45,18 +47,18 @@ public class RuleActor extends ContextAwareActor {
     public static class ActorCreator extends ContextBasedCreator<RuleActor> {
         private static final long serialVersionUID = 1L ;
 
-        private final Integer tenantId ;
+        private final String gatewayId ;
         private final Integer ruleId ;
 
-        public ActorCreator(ActorSystemContext context, Integer tenantId,Integer ruleId) {
+        public ActorCreator(ActorSystemContext context, String gatewayId, Integer ruleId) {
             super(context) ;
-            this.tenantId = tenantId ;
+            this.gatewayId = gatewayId ;
             this.ruleId = ruleId ;
         }
 
         @Override
         public RuleActor create() throws Exception {
-            return new RuleActor(context, tenantId, ruleId) ;
+            return new RuleActor(context, gatewayId, ruleId) ;
         }
     }
 }

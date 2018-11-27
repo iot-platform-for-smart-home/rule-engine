@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import scala.Int;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +106,32 @@ public class RuleController extends BaseContoller {
         return "Suspend" ;
     }
 
+    //暂停客户下所有的报警规则
+    @RequestMapping(value = "/alarmRule/suspend/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public String suspendAlarmRule(@PathVariable("gatewayId") String gatewayId){
+        List<Rule> rules = ruleService.findGatewayAlarmRule(gatewayId);
+        for(Rule rule: rules){
+            ruleService.setRuleSuspend(rule.getRuleId());
+            ifRuleDeleteOrChange(rule);
+        }
+        return "SuspendAllRule";
+    }
+
+    //获取客户下所有的报警规则
+    @RequestMapping(value = "/alarmRule/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public List<RuleCreation> getAlarmRules(@PathVariable("gatewayId")String gatewayId){
+        List<RuleCreation> ruleCreations = new LinkedList<>();
+        List<Rule> rules = ruleService.findGatewayAlarmRule(gatewayId);
+        for(Rule rule : rules){
+            List<Filter> filters = filterService.findFilterByRuleId(rule.getRuleId());
+            List<Transform> transform = transformService.getByRuleId(rule.getRuleId());
+            ruleCreations.add(new RuleCreation(rule,filters,transform));
+        }
+        return ruleCreations;
+    }
+
     //Delete 删除规则
     @ApiOperation(value = "todo ***")
     //@PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('TENANT_ADMIN')")
@@ -185,6 +212,24 @@ public class RuleController extends BaseContoller {
         return ruleCreations ;
     }
 
+    //按客户获取规则
+    @ApiOperation(value = "todo ***")
+    @RequestMapping(value = "/ruleByGateway/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public List<RuleCreation> getRuleByGatewayId(@PathVariable("gatewayId") String gatewayId)
+    {
+        List<RuleCreation> ruleCreations = new LinkedList<>();
+        List<Rule> rules = ruleService.findRuleByGatewayId(gatewayId);
+
+        for(Rule rule:rules)
+        {
+            List<Filter> filters = filterService.findFilterByRuleId(rule.getRuleId());
+            List<Transform> transforms = transformService.getByRuleId(rule.getRuleId());
+            ruleCreations.add(new RuleCreation(rule,filters,transforms));
+        }
+        return ruleCreations ;
+    }
+
     @ApiOperation(value = "todo ***")
    //@PreAuthorize("#oauth2.hasScope('all') OR hasAnyAuthority('TENANT_ADMIN', 'CUSTOMER_USER')")
     @RequestMapping(value = "/ruleByTenant/{tenantId}/{textSearch}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -193,6 +238,23 @@ public class RuleController extends BaseContoller {
     {
         List<RuleCreation> ruleCreations = new LinkedList<>();
         List<Rule> rules = ruleService.findRuleByTenantIdAndText(Integer.valueOf(tenantId),textSearch);
+
+        for(Rule rule:rules)
+        {
+            List<Filter> filters = filterService.findFilterByRuleId(rule.getRuleId());
+            List<Transform> transforms = transformService.getByRuleId(rule.getRuleId());
+            ruleCreations.add(new RuleCreation(rule,filters,transforms));
+        }
+        return ruleCreations ;
+    }
+
+    @ApiOperation(value = "todo ***")
+    @RequestMapping(value = "/ruleByGateway/{gatewayId}/{textSearch}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public List<RuleCreation> getRuleByGatewayIdAndText(@PathVariable("gatewayId") String gatewayId, @PathVariable("textSearch") String textSearch)
+    {
+        List<RuleCreation> ruleCreations = new LinkedList<>();
+        List<Rule> rules = ruleService.findRuleByGatewayIdAndText(gatewayId,textSearch);
 
         for(Rule rule:rules)
         {

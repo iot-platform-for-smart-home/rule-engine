@@ -32,7 +32,7 @@ public class Nashorn {
         engine.eval(js);
 
         Invocable invocable = (Invocable) engine;
-        Boolean result=(Boolean) invocable.invokeFunction("filter", name, deviceId, manufacture, deviceType, model, ts, key, value);
+        Boolean result=(Boolean) invocable.invokeFunction("filter", deviceId, name, manufacture, deviceType, model, ts, key, value);
         return result;
     }
 

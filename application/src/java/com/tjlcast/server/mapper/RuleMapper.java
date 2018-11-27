@@ -17,13 +17,22 @@ public interface RuleMapper {
     @Select("select * from rule where tenantId=#{tenantId}")
     List<Rule> findRuleByTenantId(@Param("tenantId")Integer tenantId);
 
+    @Select("select * from rule where gatewayId=#{gatewayId}")
+    List<Rule> findRuleByGatewayId(@Param("gatewayId")String gatewayId);
+
     @Select("select * from rule where tenantId=#{tenantId} and name like CONCAT('%',#{textSearch},'%')")
     List<Rule> findRuleByTenantIdAndText(@Param("tenantId")Integer tenantId, @Param("textSearch")String textSearch);
+
+    @Select("select * from rule where gatewayId=#{gatewayId} and name like CONCAT('%',#{textSearch},'%')")
+    List<Rule> findRuleByGatewayIdAndText(@Param("gatewayId")String gatewayId, @Param("textSearch")String textSearch);
 
     @Select("select * from rule")
     List<Rule> getAllRule();
 
-    @Insert("INSERT INTO rule(tenantId, additional_info, name, state) VALUES(#{tenantId}, #{additional_info}, #{name}, #{state})")
+    @Select("select * from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\"")
+    List<Rule> getGatewayAlarmRule(@Param("gatewayId")String gatewayId);
+
+    @Insert("INSERT INTO rule(tenantId, additional_info, name, state, gatewayId, rule_type) VALUES(#{tenantId}, #{additional_info}, #{name}, #{state}, #{gatewayId}, #{rule_type})")
     @Options(useGeneratedKeys = true, keyProperty = "ruleId", keyColumn = "ruleId")
     int addARule(Rule rule);
 

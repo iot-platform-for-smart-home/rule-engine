@@ -27,12 +27,23 @@ public class RuleService {
         return ruleMapper.findRuleByTenantId(tenantId);
     }
 
+    public List<Rule> findRuleByGatewayId(String gatewayId)
+    {
+        return ruleMapper.findRuleByGatewayId(gatewayId);
+    }
+
     public Rule findRuleById(Integer ruleId)
     {
         return ruleMapper.findRuleById(ruleId);
     }
 
+    public List<Rule> findGatewayAlarmRule(String gatewayId){
+        return ruleMapper.getGatewayAlarmRule(gatewayId);
+    }
+
     public List<Rule> findRuleByTenantIdAndText(Integer tenantId, String textSearch){return  ruleMapper.findRuleByTenantIdAndText(tenantId,textSearch);}
+
+    public List<Rule> findRuleByGatewayIdAndText(String gatewayId, String textSearch){return  ruleMapper.findRuleByGatewayIdAndText(gatewayId,textSearch);}
     // add
     public int addRule(Rule rule) {
         int i =ruleMapper.addARule(rule) ;

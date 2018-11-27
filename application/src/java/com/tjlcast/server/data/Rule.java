@@ -13,14 +13,18 @@ public class Rule {
     private String additional_info;
     private String name;       // 该rule的信息
     private String state;
+    private String gatewayId;
+    private String rule_type;
     //private List<UUID> filters;     // 该rule配置的filter
 
-    public Rule(Integer ruleId, Integer tenantId, String additional_info, String name, String state){
+    public Rule(Integer ruleId, Integer tenantId, String additional_info, String name, String state, String gatewayId, String rule_type){
         this.ruleId=ruleId;
         this.tenantId=tenantId;
         this.additional_info=additional_info;
         this.name=name;
         this.state=state;
+        this.gatewayId = gatewayId;
+        this.rule_type = rule_type;
     }
 
     public Rule(JsonObject jsonObject){
@@ -33,5 +37,7 @@ public class Rule {
         this.additional_info=jsonObject.get("additional_info").getAsString();
         this.name=jsonObject.get("name").getAsString();
         this.state=jsonObject.get("state").getAsString();
+        this.gatewayId=jsonObject.get("gatewayId").getAsString();
+        this.rule_type = jsonObject.get("rule_type").getAsString();
     }
 }
