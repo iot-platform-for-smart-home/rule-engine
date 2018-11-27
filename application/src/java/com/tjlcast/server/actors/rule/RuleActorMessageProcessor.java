@@ -2,6 +2,10 @@ package com.tjlcast.server.actors.rule;
 
 
 import akka.event.LoggingAdapter;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tjlcast.server.actors.ActorSystemContext;
 import com.tjlcast.server.actors.shared.AbstractContextAwareMsgProcessor;
 import com.tjlcast.server.data.Filter;
@@ -103,7 +107,7 @@ public class RuleActorMessageProcessor extends AbstractContextAwareMsgProcessor 
 //        }
     }
 
-    public void process(FromMsgMiddlerDeviceMsg msg) throws ScriptException, NoSuchMethodException {
+    public void process(FromMsgMiddlerDeviceMsg msg) throws ScriptException, NoSuchMethodException, IOException {
         // todo
 
         if(nashornProcess(filters,msg))
@@ -137,11 +141,30 @@ public class RuleActorMessageProcessor extends AbstractContextAwareMsgProcessor 
         return result;
     }
 
-    public String sendHTTPPOSTRequest(Transform transform, FromMsgMiddlerDeviceMsg msg)
-    {
+    public String sendHTTPPOSTRequest(Transform transform, FromMsgMiddlerDeviceMsg msg) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
         String checkRequestbody = transform.getRequestBody();
+
+        if(transform.getName().equals("RestfulPlugin")){
+            JsonObject requestBody = (JsonObject) new JsonParser().parse(checkRequestbody);
+            if(requestBody.get("url").getAsString().contains("deviceaccess:8100/api/v1/deviceaccess/rpc")){
+                String[] urlParts = requestBody.get("url").getAsString().split("/");
+                String deviceId = urlParts[urlParts.length-2];
+                JsonObject body = requestBody.get("body").getAsJsonObject();
+                String newShortAddress = getDeviceShortAddress(deviceId);
+                if(!body.get("shortAddress").getAsString().equals(newShortAddress)){
+                    body.remove("shortAddress");
+                    body.addProperty("shortAddress",newShortAddress);
+                    requestBody.remove("body");
+                    requestBody.add("shortAddress",body);
+                    checkRequestbody = requestBody.toString();
+                    transform.setRequestBody(checkRequestbody);
+                    systemContext.getTransformService().updataTransform(transform);
+                }
+            }
+        }
+
         if(checkRequestbody.contains("{name}")){
             checkRequestbody = checkRequestbody.replaceAll("\\{name\\}", msg.getName());
         }
@@ -182,6 +205,22 @@ public class RuleActorMessageProcessor extends AbstractContextAwareMsgProcessor 
         return "Success";
     }
 
-
-
+    public String getDeviceShortAddress(String deviceId) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://deviceaccess:8100/api/v1/deviceaccess/allattributes/"+deviceId)
+                .build();
+        Response response = null;
+        response = client.newCall(request).execute();
+        if(response.isSuccessful()){
+            JsonArray jsonArray = (JsonArray) new JsonParser().parse(response.body().string());
+            for(JsonElement jsonElement:jsonArray){
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                if(jsonObject.get("key").getAsString().equals("shortAddress")){
+                    return jsonObject.get("value").getAsString();
+                }
+            }
+        }
+        return null;
+    }
 }
