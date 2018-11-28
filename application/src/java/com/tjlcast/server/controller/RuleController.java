@@ -109,25 +109,33 @@ public class RuleController extends BaseContoller {
     //暂停网关下所有的报警规则
     @RequestMapping(value = "/alarmRule/suspend/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public String suspendAlarmRule(@PathVariable("gatewayId") String gatewayId){
+    public String suspendAlarmRule(@PathVariable("gatewayId") String gatewayId) throws Exception{
         List<Rule> rules = ruleService.findGatewayAlarmRule(gatewayId);
-        for(Rule rule: rules){
-            ruleService.setRuleSuspend(rule.getRuleId());
-            ifRuleDeleteOrChange(rule);
+        if(rules == null || rules.size() == 0)
+            throw new Exception("the gateway doesn't have alarm rules");
+        else{
+            for(Rule rule: rules){
+                ruleService.setRuleSuspend(rule.getRuleId());
+                ifRuleDeleteOrChange(rule);
+            }
+            return "SuspendAllRule";
         }
-        return "SuspendAllRule";
     }
 
     //激活网关下所有的报警规则
     @RequestMapping(value = "/alarmRule/activate/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public String activateAlarmRule(@PathVariable("gatewayId") String gatewayId){
+    public String activateAlarmRule(@PathVariable("gatewayId") String gatewayId) throws Exception{
         List<Rule> rules = ruleService.findGatewayAlarmRule(gatewayId);
-        for(Rule rule: rules){
-            ruleService.setRuleActive(rule.getRuleId());
-            ifRuleDeleteOrChange(rule);
+        if(rules == null || rules.size() == 0)
+            throw new Exception("the gateway doesn't have alarm rules");
+        else{
+            for(Rule rule: rules){
+                ruleService.setRuleActive(rule.getRuleId());
+                ifRuleDeleteOrChange(rule);
+            }
+            return "ActivateAllRule";
         }
-        return "ActivateAllRule";
     }
 
     //获取网关下所有的报警规则
@@ -224,7 +232,7 @@ public class RuleController extends BaseContoller {
         return ruleCreations ;
     }
 
-    //按客户获取规则
+    //按网关获取规则
     @ApiOperation(value = "todo ***")
     @RequestMapping(value = "/ruleByGateway/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
@@ -240,6 +248,19 @@ public class RuleController extends BaseContoller {
             ruleCreations.add(new RuleCreation(rule,filters,transforms));
         }
         return ruleCreations ;
+    }
+
+    //按网关获取报警规则是否在激活状态
+    @ApiOperation(value = "todo ***")
+    @RequestMapping(value = "/alarmActiveRule/{gatewayId}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public boolean getAlarmActiveRule(@PathVariable("gatewayId") String gatewayId)
+    {
+        List<Rule> rules = ruleService.findGatewayActiveAlarmRule(gatewayId);
+        if(rules.size() == 0)
+            return true;
+        else
+            return false;
     }
 
     @ApiOperation(value = "todo ***")

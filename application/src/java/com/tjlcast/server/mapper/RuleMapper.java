@@ -32,6 +32,9 @@ public interface RuleMapper {
     @Select("select * from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\"")
     List<Rule> getGatewayAlarmRule(@Param("gatewayId")String gatewayId);
 
+    @Select("select * from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\" and state = \"ACTIVE\"")
+    List<Rule> getGatewayActiveAlarmRule(@Param("gatewayId")String gatewayId);
+
     @Insert("INSERT INTO rule(tenantId, additional_info, name, state, gatewayId, rule_type) VALUES(#{tenantId}, #{additional_info}, #{name}, #{state}, #{gatewayId}, #{rule_type})")
     @Options(useGeneratedKeys = true, keyProperty = "ruleId", keyColumn = "ruleId")
     int addARule(Rule rule);
