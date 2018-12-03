@@ -83,87 +83,56 @@ public class WechatController {
 //    3. 其他格式， 必须（其他格式包括application/json, application/xml等。这些格式的数据，必须使用@RequestBody来处理）；
 
 
+    @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
+    @ResponseBody
+    public int getAllUsers(){
+        // 获取access_token
+        AccessToken access_token = weixinUtil.getAccessToken();
+        if (null == access_token) return -1;
+        // 获取关注用户列表并插入
+        userService.get_and_insert_users(access_token.getAccess_token());
+        return 0;
+    }
+
     /**
-     * 接收平台消息
-     * @param deviceMsg
+     * 发送模板消息
+     * @param alarmMSg 报警信息
      */
-    @ConfirmActive
-    @RequestMapping(value="send", method = RequestMethod.POST )
-    public void wechatController(@RequestBody String deviceMsg){
+    @RequestMapping(value="/sendTemplateMsg", method = RequestMethod.POST )
+    public void sendTemplateMsg(@RequestBody String alarmMSg){
+        logger.info("============== send templateNews ==============");
+        System.out.println("alarmMSg: " + alarmMSg);
+        JSONObject msgJson = (JSONObject) JSONObject.parse(alarmMSg);
+        String deviceName = msgJson.getString("deviceName");
+        String deviceType = msgJson.getString("deviceType");
+        String alarmDetail = msgJson.getString("alarmDetail");
+        Integer customerId = msgJson.getInteger("customerId");
+        String gatewayId = msgJson.getString("gatewayId");
+        String template_id = conf.getTemplateid();
+        String appid = conf.getAppid();
 
-        logger.info("deviceMsg: " + deviceMsg);
-        logger.info("======= send templateNews =======");
+        // 根据customerid去account模块查找需要发送的用户的 mini_openid列表
+        List<String> mini_openids = userService.getAllMiniOpenids(customerId, gatewayId);
+        if(mini_openids == null)  return;
 
-        // 解析平台传过来的json数据,建立设备对象
-         Device device = wechatService.processRequest(deviceMsg);
-
-        pendingJobs.inc();
+        // 查数据库获得Touser列表
+        List<String> toUsers = userService.getAllTousers(mini_openids);
+        if(toUsers == null)  return;
 
         // 发送模板消息
-        messageUtil.pushTemplateNews(device.getOpenid(), device.getDevice(), device.getNumber(), device.getWarningMsg());
+        for (String toUser: toUsers) {
+            JSONObject data = new JSONObject();
+            Date time = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+            data.put("first", JsonUtil.setItem("设备报警", conf.getText_color()));  // set first
+            data.put("keyword1", JsonUtil.setItem(deviceName, null));  // 设备名
+            data.put("keyword2", JsonUtil.setItem(ft.format(time), null));  // 报警时间
+            data.put("keyword3", JsonUtil.setItem(alarmDetail, null));  // 报警内容
+            data.put("remark", JsonUtil.setItem("请您及时处理！",null));
+            TemplateNews tn = new TemplateNews(toUser, template_id, "","",data);
+            MessageUtil.pushTemplateNews(tn);
+        }
+        logger.info("============== success ==============");
     }
 }
-
-
-
-
-
-
-//    @PostMapping(produces = "application/xml; charset=UTF-8")
-//    public String post(@RequestBody String requestBody,
-//                       @RequestParam("signature") String signature,
-//                       @RequestParam("timestamp") String timestamp,
-//                       @RequestParam("nonce") String nonce,
-//                       @RequestParam(name = "encrypt_type", required = false) String encType,
-//                       @RequestParam(name = "msg_signature", required = false) String msgSignature) {
-//        this.logger.info("\n接收微信请求：[signature=[{}], encType=[{}], msgSignature=[{}],"
-//                        + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
-//                        signature, encType, msgSignature, timestamp, nonce, requestBody);
-//
-//        if (!this.wechatService.checkSignature(timestamp, nonce, signature)) {
-//            throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
-//        }
-//
-//        String out = null;
-//        if (encType == null) {
-//            // 明文传输的消息
-//            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-//            WxMpXmlOutMessage outMessage = this.route(inMessage);
-//            if (outMessage == null) {
-//                return "";
-//            }
-//
-//            out = outMessage.toXml();
-//        } else if ("aes".equals(encType)) {
-//            // aes加密的消息
-//            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(
-//                    requestBody, this.wechatService.getWxMpConfigStorage(), timestamp,
-//                    nonce, msgSignature);
-//            this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
-//            WxMpXmlOutMessage outMessage = this.route(inMessage);
-//            if (outMessage == null) {
-//                return "";
-//            }
-//
-//            out = outMessage
-//                    .toEncryptedXml(this.wechatService.getWxMpConfigStorage());
-//        }
-//
-//        this.logger.debug("\n组装回复信息：{}", out);
-//
-//        return out;
-//    }
-
-//    private WxMpXmlOutMessage route(WxMpXmlMessage message) {
-//        try {
-//            return this.router.route(message);
-//        } catch (Exception e) {
-//            this.logger.error(e.getMessage(), e);
-//        }
-//
-//        return null;
-//    }
-
-
-
 

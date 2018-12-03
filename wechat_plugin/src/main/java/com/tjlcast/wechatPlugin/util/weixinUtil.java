@@ -1,7 +1,11 @@
 package com.tjlcast.wechatPlugin.util;
 
-import com.tjlcast.wechatPlugin.domain.AccessToken;
-import net.sf.json.JSONObject;
+package com.bupt.wechatplugin.util;
+
+import com.alibaba.fastjson.JSONObject;
+import com.bupt.wechatplugin.domain.AccessToken;
+import com.bupt.wechatplugin.pojo.Oauth2Token;
+import com.bupt.wechatplugin.pojo.SNSUserInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -23,8 +27,8 @@ import java.util.Arrays;
 public class weixinUtil {
     // 与接口配置信息中的Token要一致
     private static String token = "weixinmp";
-    private static final String APPID = "wxbf4262ec5dbda8c7";
-    private static final String APPSECRET = "c383d9ce8e7f0d15d6cdd222bb07e866";
+    private static final String APPID = "wxe4f16bf312643708";
+    private static final String APPSECRET = "5e1518e38678bd75487e761e926dc7d1";
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 
 
@@ -103,25 +107,16 @@ public class weixinUtil {
 
         JSONObject jsonObject = doGetStr(url);
         if(jsonObject!=null) {
-            accessToken.setAccess_token(jsonObject.getString("access_token"));
-            accessToken.setExpires_in(jsonObject.getInt("expires_in"));
+            try {
+                accessToken.setAccess_token(jsonObject.getString("access_token"));
+                accessToken.setExpires_in(jsonObject.getInteger("expires_in"));
+            } catch (Exception e) {
+                int errorCode = jsonObject.getInteger("errcode");
+                String errorMsg = jsonObject.getString("errmsg");
+                logger.error("获取网页授权凭证失败 errcode:{} errmsg:{}", errorCode, errorMsg);
+            }
         }
-        logger.info("access_token: " + accessToken.getAccess_token());
         return accessToken;
-    }
-
-    /**
-     *  差数据库获取 openid
-     * @param nickname
-     * @return
-     */
-    public static String getOpenid(String nickname){
-        String url = "http://beiyouxianyu.cn/api/v1/wechatplugin/findByNickName?nickname=" + nickname;
-//        logger.info("get openid url: " + url);
-        JSONObject jsonObject = doGetStr(url);
-//        logger.info("jasonObject: : " + jsonObject);
-
-        return jsonObject.getString("openid");
     }
 
     /**
@@ -138,7 +133,7 @@ public class weixinUtil {
             HttpEntity entity = response.getEntity();
             if(entity!=null) {
                 String result = EntityUtils.toString(entity,"UTF-8");
-                jsonObject = JSONObject.fromObject(result);
+                jsonObject = JSONObject.parseObject(result);
             }
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
@@ -160,7 +155,7 @@ public class weixinUtil {
         httpPost.setEntity(new StringEntity(outStr,"UTF-8"));
         HttpResponse response = httpClient.execute(httpPost);
         String result = EntityUtils.toString(response.getEntity(),"UTF-8");
-        jsonObject = JSONObject.fromObject(result);
+        jsonObject = JSONObject.parseObject(result);
         return jsonObject;
     }
 }
