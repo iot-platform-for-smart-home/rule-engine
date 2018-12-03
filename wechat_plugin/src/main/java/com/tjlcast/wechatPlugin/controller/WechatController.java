@@ -1,12 +1,15 @@
 package com.tjlcast.wechatPlugin.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
-import com.tjlcast.basePlugin.aop.ConfirmActive;
 import com.tjlcast.basePlugin.common.ZKConstant;
 import com.tjlcast.basePlugin.pluginManager.Plugin;
-import com.tjlcast.wechatPlugin.domain.Device;
-import com.tjlcast.wechatPlugin.service.impl.CoreServiceImpl;
+import com.tjlcast.wechatPlugin.domain.AccessToken;
+import com.tjlcast.wechatPlugin.domain.TemplateNews;
+import com.tjlcast.wechatPlugin.domain.WechatConf;
+import com.tjlcast.wechatPlugin.service.UserService;
+import com.tjlcast.wechatPlugin.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.tjlcast.wechatPlugin.util.weixinUtil;
 import com.tjlcast.wechatPlugin.util.MessageUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/wechatplugin/")
@@ -26,20 +33,19 @@ public class WechatController {
     private Counter pendingJobs ;
 
     @Autowired
+    private WechatConf conf;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     public void setMetrics(MetricRegistry metrics) {
         this.metrics = metrics ;
         this.pendingJobs = this.metrics.counter(controllerName) ;
     }
 
-    @Autowired
-    private MessageUtil messageUtil;
-
-    private CoreServiceImpl wechatService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public WechatController(CoreServiceImpl coreService) {
-        this.wechatService = coreService;
-    }
 
     /**
      * 微信开发者服务器验证
@@ -86,11 +92,15 @@ public class WechatController {
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
     @ResponseBody
     public int getAllUsers(){
+        logger.info("============== get followed users ==============");
+        String appid = conf.getAppid();
+        String secret = conf.getAppSecret();
         // 获取access_token
-        AccessToken access_token = weixinUtil.getAccessToken();
+        AccessToken access_token = weixinUtil.getAccessToken(appid , secret);
         if (null == access_token) return -1;
         // 获取关注用户列表并插入
         userService.get_and_insert_users(access_token.getAccess_token());
+        logger.info("============== get followed users success ==============");
         return 0;
     }
 
@@ -109,7 +119,6 @@ public class WechatController {
         Integer customerId = msgJson.getInteger("customerId");
         String gatewayId = msgJson.getString("gatewayId");
         String template_id = conf.getTemplateid();
-        String appid = conf.getAppid();
 
         // 根据customerid去account模块查找需要发送的用户的 mini_openid列表
         List<String> mini_openids = userService.getAllMiniOpenids(customerId, gatewayId);
@@ -130,9 +139,8 @@ public class WechatController {
             data.put("keyword3", JsonUtil.setItem(alarmDetail, null));  // 报警内容
             data.put("remark", JsonUtil.setItem("请您及时处理！",null));
             TemplateNews tn = new TemplateNews(toUser, template_id, "","",data);
-            MessageUtil.pushTemplateNews(tn);
+            MessageUtil.pushTemplateNews(conf.getAppid(), conf.getAppSecret(), tn);
         }
         logger.info("============== success ==============");
     }
 }
-

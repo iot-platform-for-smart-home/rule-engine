@@ -1,7 +1,7 @@
 package com.tjlcast.wechatPlugin.mapping;
 
 
-import com.bupt.wechatplugin.pojo.Auth;
+import com.tjlcast.wechatPlugin.pojo.Auth;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

@@ -1,11 +1,7 @@
 package com.tjlcast.wechatPlugin.util;
 
-package com.bupt.wechatplugin.util;
-
 import com.alibaba.fastjson.JSONObject;
-import com.bupt.wechatplugin.domain.AccessToken;
-import com.bupt.wechatplugin.pojo.Oauth2Token;
-import com.bupt.wechatplugin.pojo.SNSUserInfo;
+import com.tjlcast.wechatPlugin.domain.AccessToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -25,10 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class weixinUtil {
-    // 与接口配置信息中的Token要一致
+
     private static String token = "weixinmp";
-    private static final String APPID = "wxe4f16bf312643708";
-    private static final String APPSECRET = "5e1518e38678bd75487e761e926dc7d1";
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 
 
@@ -100,9 +94,9 @@ public class weixinUtil {
     /**
      *  get access_token
      */
-    public static AccessToken getAccessToken() {
+    public static AccessToken getAccessToken(String appid, String secret) {
         AccessToken accessToken = new AccessToken();
-        String url = ACCESS_TOKEN_URL.replace("APPID",APPID).replace("APPSECRET", APPSECRET);
+        String url = ACCESS_TOKEN_URL.replace("APPID",appid).replace("APPSECRET", secret);
         logger.info("get_access_token_url: " + url);
 
         JSONObject jsonObject = doGetStr(url);

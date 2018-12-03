@@ -1,115 +1,81 @@
 package com.tjlcast.wechatPlugin.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.commons.lang.StringUtils;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import java.io.*;
+import java.net.ConnectException;
+import java.net.URL;
 
-import java.util.List;
-import java.util.Map;
+public class CommonUtil {
+    private static Logger logger = LoggerFactory.getLogger(CommonUtil.class);
 
-public class JsonUtil {
-    private static Gson gson = null;
-
-    static {
-        if (gson == null) {
-            gson = new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
-        }
-    }
-
-    public static String toJsonString(Object obj) {
-        if (obj == null) {
-            return "{}";
-        }
-        if (obj instanceof String) {
-            if (StringUtils.isEmpty(obj.toString())) {
-                return "{}";
-            }
-        }
-        String json = "";
+    public static JSONObject httpsRequest(String requestUrl, String requestMethod, String outputStr) {
+        JSONObject jsonObject = null;
         try {
-            if (gson != null) {
-                json = gson.toJson(obj);
+            // 创建SSLContext对象，并使用我们指定的信任管理器初始化
+            TrustManager[] tm = {new MyX509TrustManager()};
+            SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
+            sslContext.init(null, tm, new java.security.SecureRandom());
+            // 从上述SSLContext对象中得到SSLSocketFactory对象
+            SSLSocketFactory ssf = sslContext.getSocketFactory();
+
+            URL url = new URL(requestUrl);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setSSLSocketFactory(ssf);
+
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            // 设置请求方式（GET/POST）
+            conn.setRequestMethod(requestMethod);
+
+            // 当outputStr不为null时向输出流写数据
+            if (null != outputStr) {
+                OutputStream outputStream = conn.getOutputStream();
+                // 注意编码格式
+                outputStream.write(outputStr.getBytes("UTF-8"));
+                outputStream.close();
             }
+
+            // 从输入流读取返回内容
+            InputStream inputStream = conn.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String str = null;
+            StringBuffer buffer = new StringBuffer();
+            while ((str = bufferedReader.readLine()) != null) {
+                buffer.append(str);
+            }
+
+            // 释放资源
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+            inputStream = null;
+            conn.disconnect();
+            jsonObject = JSONObject.parseObject(buffer.toString());
+        } catch (ConnectException ce) {
+            logger.error("连接超时：{}", ce);
         } catch (Exception e) {
-            return "{}";
+            logger.error("https请求异常：{}", e);
         }
-        return json;
+        return jsonObject;
     }
 
-    /**
-     * 转成bean
-     *
-     * @param json
-     * @param classOfT
-     * @return
-     */
-    public static <T> T fromJsonString(String json, Class<T> classOfT) {
-        T t = null;
-        if (gson != null) {
-            t = gson.fromJson(json, classOfT);
+    public static String urlEncodeUTF8(String source) {
+        String result = source;
+        try {
+            result = java.net.URLEncoder.encode(source, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        return t;
-    }
-
-    /**
-     * 转成list
-     *
-     * @param json
-     * @param cls
-     * @return
-     */
-    public static <T> List<T> toList(String json, Class<T> cls) {
-        List<T> list = null;
-        if (gson != null) {
-            list = gson.fromJson(json, new TypeToken<List<T>>() {
-            }.getType());
-        }
-        return list;
-    }
-
-    /**
-     * json转成list<map>
-     *
-     * @param json
-     * @return
-     */
-    public static <T> List<Map<String, T>> toListMaps(String json) {
-        List<Map<String, T>> list = null;
-        if (gson != null) {
-            list = gson.fromJson(json, new TypeToken<List<Map<String, T>>>() {
-            }.getType());
-        }
-        return list;
-    }
-
-    /**
-     * json转成map
-     *
-     * @param json
-     * @return
-     */
-    public static <T> Map<String, T> toMap(String json) {
-        Map<String, T> map = null;
-        if (gson != null) {
-            map = gson.fromJson(json, new TypeToken<Map<String, T>>() {
-            }.getType());
-        }
-        return map;
-    }
-
-    /**
-     *  为 data 中每一个key的值指定颜色
-     * @param value
-     * @param color
-     * @return  TreeMap
-     */
-    public static JSONObject setItem(String value, String color) {
-        JSONObject item = new JSONObject();
-        item.put("value", value);
-        item.put("color", color);
-        return item;
+        return result;
     }
 }
+

@@ -2,10 +2,10 @@ package com.tjlcast.wechatPlugin.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bupt.wechatplugin.mapping.UserMapper;
-import com.bupt.wechatplugin.pojo.Auth;
-import com.bupt.wechatplugin.service.UserService;
-import com.bupt.wechatplugin.util.CommonUtil;
+import com.tjlcast.wechatPlugin.mapping.UserMapper;
+import com.tjlcast.wechatPlugin.pojo.Auth;
+import com.tjlcast.wechatPlugin.service.UserService;
+import com.tjlcast.wechatPlugin.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

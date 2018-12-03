@@ -1,7 +1,7 @@
 package com.tjlcast.wechatPlugin.util;
 
-import com.bupt.wechatplugin.domain.*;
 import com.thoughtworks.xstream.XStream;
+import com.tjlcast.wechatPlugin.domain.*;
 import org.apache.http.ParseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -143,8 +143,8 @@ public class MessageUtil {
      *  发送模板消息
      * @param templateNews
      */
-    public static void pushTemplateNews(TemplateNews templateNews) {
-        AccessToken access_token = weixinUtil.getAccessToken();
+    public static void pushTemplateNews(String appid, String secret, TemplateNews templateNews) {
+        AccessToken access_token = weixinUtil.getAccessToken(appid, secret);
         System.out.println("access_token : " + access_token);
 
         String body = JsonUtil.toJsonString(templateNews);

@@ -1,4 +1,4 @@
-package com.tjlcast.wechatPlugin..pojo;
+package com.tjlcast.wechatPlugin.pojo;
 
 public class Auth {
     private String unionid;
