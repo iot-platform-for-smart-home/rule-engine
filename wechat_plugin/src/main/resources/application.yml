@@ -11,7 +11,7 @@ spring:
     url: jdbc:mysql://118.190.202.148:3306/BUPT_IOT?characterEncoding=UTF-8
     username: root
     password: Gantch815
-    cachePrepStmts: true #开启二级缓存
+#    cachePrepStmts: true #开启二级缓存
 
 mybatis:
   configuration:

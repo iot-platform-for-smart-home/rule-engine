@@ -3,6 +3,7 @@ package com.tjlcast.wechatPlugin.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import com.tjlcast.basePlugin.aop.ConfirmActive;
 import com.tjlcast.basePlugin.common.ZKConstant;
 import com.tjlcast.basePlugin.pluginManager.Plugin;
 import com.tjlcast.wechatPlugin.domain.AccessToken;
@@ -108,6 +109,7 @@ public class WechatController {
      * 发送模板消息
      * @param alarmMSg 报警信息
      */
+    @ConfirmActive
     @RequestMapping(value="/sendTemplateMsg", method = RequestMethod.POST )
     public void sendTemplateMsg(@RequestBody String alarmMSg){
         logger.info("============== send templateNews ==============");

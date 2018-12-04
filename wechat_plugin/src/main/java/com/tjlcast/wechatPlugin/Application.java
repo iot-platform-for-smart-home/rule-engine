@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication  //等价于以默认属性使用@Configuration，@EnableAutoConfiguration和@ComponentScan
 //@PropertySource({"classpath:disconf.properties"})  //导入配置
 //@ImportResource({"classpath:disconf.xml"})   //引入disconf
-//@MapperScan(basePackages = "com.bupt.wechatplugin.mapping")  // 扫描目录下的Mapping方法
+@MapperScan(basePackages = "com.tjlcast.wechatPlugin.mapping")  // 扫描目录下的Mapping方法
 //@Component(basePackages = "")   //扫描目录下的组件
 //@EnableAutoConfiguration   //自动配置
 public class Application {

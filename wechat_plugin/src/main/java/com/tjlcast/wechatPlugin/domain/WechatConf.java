@@ -1,5 +1,8 @@
 package com.tjlcast.wechatPlugin.domain;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class WechatConf {
     //    private String appid = "wx3f4d110990c55e1d"; // 测试号
     private String appid = "wxe4f16bf312643708";

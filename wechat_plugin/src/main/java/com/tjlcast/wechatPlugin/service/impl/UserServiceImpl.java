@@ -2,6 +2,7 @@ package com.tjlcast.wechatPlugin.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.tjlcast.basePlugin.service.DefaultService;
 import com.tjlcast.wechatPlugin.mapping.UserMapper;
 import com.tjlcast.wechatPlugin.pojo.Auth;
 import com.tjlcast.wechatPlugin.service.UserService;
@@ -13,7 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends DefaultService implements UserService {
+
+    @Override
+    public Object service(Object[] data) {
+        return null;
+    }
 
     @Autowired
     private UserMapper userMapper;
