@@ -18,8 +18,8 @@ public interface UserMapper {
             @Result(property = "oa_openid", column = "oa_openid")
     })
 
-    @Select("select mini_openid from auth where unionid = #{unionid}")
-    String selectMiniOpenidByUnionid(@Param("unionid")String unionid);
+    @Select("select * from auth where oa_openid = #{oa_openid}")
+    String selectByOaOpenid(@Param("oa_openid")String oa_openid);
 
     @Select("select oa_openid from auth where mini_openid = #{mini_openid}")
     String selectOaOpenidByMiniOpenid(@Param("mini_openid")String mini_openid);

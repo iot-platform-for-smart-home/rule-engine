@@ -142,7 +142,8 @@ public class MessageUtil {
 
     /**
      *  发送模板消息
-     * @param templateNews
+     * @param access_token token
+     * @param templateNews 模板消息
      */
     public static boolean pushTemplateNews(String access_token, TemplateNews templateNews) {
         System.out.println("access_token : " + access_token);

@@ -134,6 +134,9 @@ public class WechatController {
         // 获取 access_token
         AccessToken access_token = weixinUtil.getAccessToken(conf.getAppid(), conf.getAppSecret());
 
+        // 检查更新所有关注公众号用户
+        userService.get_and_insert_users(access_token.getAccess_token());
+
         // 计算出错的次数，大于三次则结束循环
         int error_time_count = 0;
         // 发送模板消息
