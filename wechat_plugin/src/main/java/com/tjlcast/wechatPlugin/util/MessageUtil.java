@@ -1,5 +1,6 @@
 package com.tjlcast.wechatPlugin.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.thoughtworks.xstream.XStream;
 import com.tjlcast.wechatPlugin.domain.*;
 import org.apache.http.ParseException;
@@ -143,21 +144,26 @@ public class MessageUtil {
      *  发送模板消息
      * @param templateNews
      */
-    public static void pushTemplateNews(String appid, String secret, TemplateNews templateNews) {
-        AccessToken access_token = weixinUtil.getAccessToken(appid, secret);
+    public static boolean pushTemplateNews(String access_token, TemplateNews templateNews) {
         System.out.println("access_token : " + access_token);
-
         String body = JsonUtil.toJsonString(templateNews);
         System.out.println("requestBody: " + body);
-
-        String url = TemplateNews_URL.replace("ACCESS_TOKEN",access_token.getAccess_token());
+        String url = TemplateNews_URL.replace("ACCESS_TOKEN",access_token);
         System.out.println("send_message_url: " + url);
         try {
-            weixinUtil.doPostStr(url,body);
+            JSONObject res = weixinUtil.doPostStr(url,body);
+            int errcode = res.getInteger("errcode");
+            String errmsg = res.getString("errmsg");
+            long msgid = res.getLong("msgid");
+            System.out.print(res.toJSONString());
+            if(errcode == 0){
+                return true;
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 }

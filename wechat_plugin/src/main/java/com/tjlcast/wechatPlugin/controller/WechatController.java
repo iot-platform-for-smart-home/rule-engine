@@ -22,6 +22,7 @@ import com.tjlcast.wechatPlugin.util.MessageUtil;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("api/v1/wechatplugin/")
@@ -130,19 +131,36 @@ public class WechatController {
         List<String> toUsers = userService.getAllTousers(mini_openids);
         if(toUsers == null)  return;
 
+        // 获取 access_token
+        AccessToken access_token = weixinUtil.getAccessToken(conf.getAppid(), conf.getAppSecret());
+
+        // 计算出错的次数，大于三次则结束循环
+        int error_time_count = 0;
         // 发送模板消息
-        for (String toUser: toUsers) {
+        for (int i = 0; i < toUsers.size() && error_time_count < 3; i ++) {
+            String toUser = toUsers.get(i);
             JSONObject data = new JSONObject();
-            Date time = new Date();
+            Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+            ft.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
             data.put("first", JsonUtil.setItem("设备报警", conf.getText_color()));  // set first
             data.put("keyword1", JsonUtil.setItem(deviceName, null));  // 设备名
-            data.put("keyword2", JsonUtil.setItem(ft.format(time), null));  // 报警时间
+            data.put("keyword2", JsonUtil.setItem(ft.format(date), null));  // 报警时间
             data.put("keyword3", JsonUtil.setItem(alarmDetail, null));  // 报警内容
             data.put("remark", JsonUtil.setItem("请您及时处理！",null));
             TemplateNews tn = new TemplateNews(toUser, template_id, "","",data);
-            MessageUtil.pushTemplateNews(conf.getAppid(), conf.getAppSecret(), tn);
+            if(!MessageUtil.pushTemplateNews(access_token.getAccess_token(), tn)){
+                // 发送失败更新access_token 重新发送
+                access_token = weixinUtil.getAccessToken(conf.getAppid(), conf.getAppSecret());
+                i -= 1;
+                error_time_count ++;
+                continue;
+            }
         }
-        logger.info("============== success ==============");
+        if(error_time_count>=3){
+            logger.info("============== error ==============");
+        } else {
+            logger.info("============== success ==============");
+        }
     }
 }
