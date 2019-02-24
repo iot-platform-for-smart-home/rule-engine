@@ -41,6 +41,9 @@ public class WechatController {
     private UserService userService;
 
     @Autowired
+    private weixinUtil weixinUtil;
+
+    @Autowired
     public void setMetrics(MetricRegistry metrics) {
         this.metrics = metrics ;
         this.pendingJobs = this.metrics.counter(controllerName) ;
@@ -94,15 +97,12 @@ public class WechatController {
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
     @ResponseBody
     public int getAllUsers(){
-        logger.info("============== get followed users ==============");
-        String appid = conf.getAppid();
-        String secret = conf.getAppSecret();
         // 获取access_token
-        AccessToken access_token = weixinUtil.getAccessToken(appid , secret);
-        if (null == access_token) return -1;
+//        AccessToken access_token = weixinUtil.getAccessToken();
+        String accesstoken = weixinUtil.getAccessToken()  ;
+        if (null == accesstoken  || "".equals(accesstoken)) return -1;
         // 获取关注用户列表并插入
-        userService.get_and_insert_users(access_token.getAccess_token());
-        logger.info("============== get followed users success ==============");
+        userService.get_and_insert_users(accesstoken);
         return 0;
     }
 
@@ -132,10 +132,7 @@ public class WechatController {
         if(toUsers == null)  return;
 
         // 获取 access_token
-        AccessToken access_token = weixinUtil.getAccessToken(conf.getAppid(), conf.getAppSecret());
-
-        // 检查更新所有关注公众号用户
-        userService.get_and_insert_users(access_token.getAccess_token());
+        String access_token = weixinUtil.getAccessToken();
 
         // 计算出错的次数，大于三次则结束循环
         int error_time_count = 0;
@@ -146,15 +143,16 @@ public class WechatController {
             Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
             ft.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-            data.put("first", JsonUtil.setItem("设备报警", conf.getText_color()));  // set first
-            data.put("keyword1", JsonUtil.setItem(deviceName, null));  // 设备名
-            data.put("keyword2", JsonUtil.setItem(ft.format(date), null));  // 报警时间
-            data.put("keyword3", JsonUtil.setItem(alarmDetail, null));  // 报警内容
-            data.put("remark", JsonUtil.setItem("请您及时处理！",null));
+            data.put("first", JsonUtil.setItem("设备报警", "#ED0000"));  // set first
+            data.put("keyword1", JsonUtil.setItem(deviceName, "#000000"));  // 设备名
+            data.put("keyword2", JsonUtil.setItem(ft.format(date), "#000000"));  // 报警时间
+            data.put("keyword3", JsonUtil.setItem(alarmDetail, "#000000"));  // 报警内容
+            data.put("remark", JsonUtil.setItem("请您及时处理！","#ED0000"));
             TemplateNews tn = new TemplateNews(toUser, template_id, "","",data);
-            if(!MessageUtil.pushTemplateNews(access_token.getAccess_token(), tn)){
+            if(!MessageUtil.pushTemplateNews(access_token, tn)){
                 // 发送失败更新access_token 重新发送
-                access_token = weixinUtil.getAccessToken(conf.getAppid(), conf.getAppSecret());
+                weixinUtil.updateAccesstoken();
+                access_token = weixinUtil.getAccessToken();
                 i -= 1;
                 error_time_count ++;
                 continue;

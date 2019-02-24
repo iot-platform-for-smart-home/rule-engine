@@ -95,15 +95,20 @@ public class UserServiceImpl extends DefaultService implements UserService {
             total -= count;
             for (int i = 0; i < count; i++) {  // 对每一个openid，通过查找用户信息API获得对应的unionid
                 String openid = openids.getString(i);
-                // 用户此前未关注公众号
-                if (null == userMapper.selectByOaOpenid(openid)) {
-                    // 获取用户 unionid 和 公众号 openid 并插入数据库
-                    String GET_USERINFO_URL = String.format("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s", access_token, openid);
-                    json = CommonUtil.httpsRequest(GET_USERINFO_URL, "GET", null);
-                    String unionid = json.getString("unionid");
-                    if(null == userMapper.selectByUnionid(unionid)) { // 该用户此前未登录过小程序
-                        userMapper.insert(unionid, null, openid);
-                    } else {  // 该用户登录过小程序
+                String GET_USERINFO_URL = String.format("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s", access_token, openid);
+                json = CommonUtil.httpsRequest(GET_USERINFO_URL, "GET", null);
+                String unionid = json.getString("unionid");
+
+                if (null == unionid || "".equals(unionid)) {
+                    continue;
+                }
+
+                Auth user = userMapper.selectByUnionid(unionid);
+                if (null == user) {  // 用户不存在
+                    userMapper.insert(unionid, null, openid);
+                } else {
+                    String oaopenid_tmp = user.getOa_openid();
+                    if(null == oaopenid_tmp || "".equals(oaopenid_tmp)){  // 未记录公众号openid则更新
                         userMapper.updateOaOpenid(unionid, openid);
                     }
                 }
