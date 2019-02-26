@@ -6,7 +6,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.tjlcast.basePlugin.aop.ConfirmActive;
 import com.tjlcast.basePlugin.common.ZKConstant;
 import com.tjlcast.basePlugin.pluginManager.Plugin;
-import com.tjlcast.wechatPlugin.domain.AccessToken;
 import com.tjlcast.wechatPlugin.domain.TemplateNews;
 import com.tjlcast.wechatPlugin.domain.WechatConf;
 import com.tjlcast.wechatPlugin.service.UserService;
@@ -96,14 +95,16 @@ public class WechatController {
 
     @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
     @ResponseBody
-    public int getAllUsers(){
+    public void getAllUsers(){
         // 获取access_token
-//        AccessToken access_token = weixinUtil.getAccessToken();
-        String accesstoken = weixinUtil.getAccessToken()  ;
-        if (null == accesstoken  || "".equals(accesstoken)) return -1;
+        String accesstoken = weixinUtil.getAccessToken();
+        if (null == accesstoken  || "".equals(accesstoken)) {
+            weixinUtil.updateAccesstoken();
+            accesstoken = weixinUtil.getAccessToken();
+        }
+
         // 获取关注用户列表并插入
         userService.get_and_insert_users(accesstoken);
-        return 0;
     }
 
     /**
@@ -113,15 +114,11 @@ public class WechatController {
     @ConfirmActive
     @RequestMapping(value="/sendTemplateMsg", method = RequestMethod.POST )
     public void sendTemplateMsg(@RequestBody String alarmMSg){
-        logger.info("============== send templateNews ==============");
+
         System.out.println("alarmMSg: " + alarmMSg);
         JSONObject msgJson = (JSONObject) JSONObject.parse(alarmMSg);
-        String deviceName = msgJson.getString("deviceName");
-        String deviceType = msgJson.getString("deviceType");
-        String alarmDetail = msgJson.getString("alarmDetail");
         Integer customerId = msgJson.getInteger("customerId");
         String gatewayId = msgJson.getString("gatewayId");
-        String template_id = conf.getTemplateid();
 
         // 根据customerid去account模块查找需要发送的用户的 mini_openid列表
         List<String> mini_openids = userService.getAllMiniOpenids(customerId, gatewayId);
@@ -134,34 +131,47 @@ public class WechatController {
         // 获取 access_token
         String access_token = weixinUtil.getAccessToken();
 
-        // 计算出错的次数，大于三次则结束循环
-        int error_time_count = 0;
         // 发送模板消息
-        for (int i = 0; i < toUsers.size() && error_time_count < 3; i ++) {
+        logger.info("============== send templateNews ==============");
+        String deviceName = msgJson.getString("deviceName");
+        String deviceType = msgJson.getString("deviceType");
+        String alarmDetail = msgJson.getString("alarmDetail");
+        String template_id = conf.getTemplateid();
+        for (int i = 0; i < toUsers.size(); i ++) {
             String toUser = toUsers.get(i);
             JSONObject data = new JSONObject();
             Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
             ft.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-            data.put("first", JsonUtil.setItem("设备报警", "#ED0000"));  // set first
-            data.put("keyword1", JsonUtil.setItem(deviceName, "#000000"));  // 设备名
+            data.put("first", JsonUtil.setItem("设备报警", "#ED0000"));   // 消息首
+            data.put("keyword1", JsonUtil.setItem(deviceName, "#000000"));       // 设备名
             data.put("keyword2", JsonUtil.setItem(ft.format(date), "#000000"));  // 报警时间
-            data.put("keyword3", JsonUtil.setItem(alarmDetail, "#000000"));  // 报警内容
-            data.put("remark", JsonUtil.setItem("请您及时处理！","#ED0000"));
+            data.put("keyword3", JsonUtil.setItem(alarmDetail, "#000000"));      // 报警内容
+            data.put("remark", JsonUtil.setItem("请您及时处理！","#ED0000"));  // 消息尾
             TemplateNews tn = new TemplateNews(toUser, template_id, "","",data);
-            if(!MessageUtil.pushTemplateNews(access_token, tn)){
-                // 发送失败更新access_token 重新发送
-                weixinUtil.updateAccesstoken();
-                access_token = weixinUtil.getAccessToken();
-                i -= 1;
-                error_time_count ++;
-                continue;
+
+            // 计算出错的次数，大于三次则结束循环
+            int error_time_count = 0;
+            while(error_time_count < 3){
+                int error = MessageUtil.pushTemplateNews(access_token, tn);
+
+                // 解析返回结果
+                if (error == 0) {  // 发送成功
+                    break;
+                } else if(error == 41001) { // errcode = 41001 , access_token失效, 更新重试
+                    weixinUtil.updateAccesstoken();
+                    access_token = weixinUtil.getAccessToken();
+                    error_time_count ++;
+                    continue;
+                } else {  // 发送失败
+                    error_time_count = 3;
+                }
             }
-        }
-        if(error_time_count>=3){
-            logger.info("============== error ==============");
-        } else {
-            logger.info("============== success ==============");
+            if(error_time_count>=3){
+                logger.info("======== user[%s] error  =========", toUser);
+            } else {
+                logger.info("======== user[%s] success =========", toUser);
+            }
         }
     }
 }

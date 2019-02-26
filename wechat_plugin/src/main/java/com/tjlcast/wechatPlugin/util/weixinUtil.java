@@ -34,7 +34,7 @@ public class weixinUtil {
 
     private static Logger logger = LoggerFactory.getLogger(new weixinUtil().getClass());
 
-    @Value("${wechatConfig.accesstoken}")
+//    @Value("${wechatConfig.accesstoken}")
     public void setAccessToken(String accessToken) {
         accesstoken = accessToken;
     }
@@ -190,7 +190,12 @@ public class weixinUtil {
     }
 
     /**
-     * post请求
+     * POST请求
+     * @param url
+     * @param outStr
+     * @return
+     * @throws ParseException
+     * @throws IOException
      */
     public static JSONObject doPostStr(String url, String outStr) throws ParseException, IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();

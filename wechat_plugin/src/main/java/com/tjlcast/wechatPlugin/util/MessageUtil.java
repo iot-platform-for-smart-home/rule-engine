@@ -145,26 +145,36 @@ public class MessageUtil {
      * @param access_token token
      * @param templateNews 模板消息
      */
-    public static boolean pushTemplateNews(String access_token, TemplateNews templateNews) {
-        System.out.println("access_token : " + access_token);
-        String body = JsonUtil.toJsonString(templateNews);
-        System.out.println("requestBody: " + body);
+    public static int pushTemplateNews(String access_token, TemplateNews templateNews) {
+        // 打印请求信息
         String url = TemplateNews_URL.replace("ACCESS_TOKEN",access_token);
-        System.out.println("send_message_url: " + url);
+        System.out.println("URL of Sending Template News : " + url);
+        String body = JsonUtil.toJsonString(templateNews);
+        System.out.println("Template News Body : " + body);
+
         try {
-            JSONObject res = weixinUtil.doPostStr(url,body);
+            // 发送模板消息
+            JSONObject res = weixinUtil.doPostStr(url, body);
             int errcode = res.getInteger("errcode");
-            String errmsg = res.getString("errmsg");
-            long msgid = res.getLong("msgid");
+//            String errmsg = res.getString("errmsg");
+//            long msgid = res.getLong("msgid") ;  // sometimes missed
+            // 打印结果
             System.out.print(res.toJSONString());
-            if(errcode == 0){
-                return true;
-            }
-        } catch (ParseException e) {
+            return errcode;
+//            if (errcode == 0) {
+//                return true;
+//            } else if (errcode == 43004) {  // 用户未关注公众号（取消关注）
+//                System.out.println("ERROR MSG:" + errmsg);
+//                return true;
+//            } else {
+//                System.out.println("ERROR MSG:" + errmsg);
+//                return false;
+//            }
+        }catch (ParseException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return -1;
     }
 }
