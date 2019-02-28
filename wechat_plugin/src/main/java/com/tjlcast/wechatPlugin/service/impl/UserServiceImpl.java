@@ -70,7 +70,7 @@ public class UserServiceImpl extends DefaultService implements UserService {
     @Override
     public List<String> getAllMiniOpenids(Integer customerid, String gatewayid) {
         List<String> mini_openids = new ArrayList<>();
-        List<Integer> customerids = userMapper.selectAllCustomers(customerid);
+        List<Integer> customerids = userMapper.selectAllCustomers(customerid, gatewayid);
         customerids.add(customerid);
         for (Integer id : customerids){
             String mini_openid = userMapper.selectMiniOpenid(id);

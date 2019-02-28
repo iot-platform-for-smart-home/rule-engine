@@ -158,7 +158,7 @@ public class WechatController {
                 // 解析返回结果
                 if (error == 0) {  // 发送成功
                     break;
-                } else if(error == 41001) { // errcode = 41001 , access_token失效, 更新重试
+                } else if(error == 42001) { // errcode = 41001 , access_token失效, 更新重试
                     weixinUtil.updateAccesstoken();
                     access_token = weixinUtil.getAccessToken();
                     error_time_count ++;
@@ -168,9 +168,9 @@ public class WechatController {
                 }
             }
             if(error_time_count>=3){
-                logger.info("======== user[%s] error  =========", toUser);
+                logger.info("======== user  error  =========");
             } else {
-                logger.info("======== user[%s] success =========", toUser);
+                logger.info("======== user success =========");
             }
         }
     }

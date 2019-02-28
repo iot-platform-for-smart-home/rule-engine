@@ -36,8 +36,8 @@ public interface UserMapper {
     @Update("update auth set oa_openid = #{oa_openid} where unionid = #{unionid}")
     void updateOaOpenid(@Param("unionid")String unionid, @Param("oa_openid")String oa_openid);
 
-    @Select("select binder from user_relation where binded = #{customerid}")
-    List<Integer> selectAllCustomers(@Param("customerid") Integer customerid);
+    @Select("select binder from user_relation where binded = #{customerid} and gateid LIKE CONCAT(CONCAT('%',#{gatewayid}),'%')")
+    List<Integer> selectAllCustomers(@Param("customerid") Integer customerid, @Param("gatewayid")String gatewayid);
 
     @Select("select openid from user_new where id = #{customerid}")
     String selectMiniOpenid(@Param("customerid")Integer customerid);
