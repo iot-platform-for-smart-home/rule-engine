@@ -1,10 +1,11 @@
 package com.tjlcast.wechatPlugin.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class JsonUtil {
      * 转成bean
      *
      * @param json
-     * @param cls
+     * @param classOfT
      * @return
      */
     public static <T> T fromJsonString(String json, Class<T> classOfT) {
@@ -97,5 +98,18 @@ public class JsonUtil {
             }.getType());
         }
         return map;
+    }
+
+    /**
+     *  为 data 中每一个key的值指定颜色
+     * @param value
+     * @param color
+     * @return  TreeMap
+     */
+    public static JSONObject setItem(String value, String color) {
+        JSONObject item = new JSONObject();
+        item.put("value", value);
+        item.put("color", color);
+        return item;
     }
 }

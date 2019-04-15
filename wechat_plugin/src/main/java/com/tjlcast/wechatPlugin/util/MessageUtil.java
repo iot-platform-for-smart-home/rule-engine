@@ -1,27 +1,20 @@
 package com.tjlcast.wechatPlugin.util;
 
-import com.tjlcast.basePlugin.service.DefaultService;
-import com.tjlcast.wechatPlugin.domain.*;
+import com.alibaba.fastjson.JSONObject;
 import com.thoughtworks.xstream.XStream;
+import com.tjlcast.wechatPlugin.domain.*;
 import org.apache.http.ParseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-@Service
-public class MessageUtil extends DefaultService{
-    @Override
-    public Object service(Object[] data) {
-        return null;
-    }
-
+public class MessageUtil {
     /**
      *  返回消息类型 （text/image/news/link/location/event)
      */
@@ -125,7 +118,7 @@ public class MessageUtil extends DefaultService{
      * @param fromUserName  用户openid
      * @return  XML
      */
-     public static String initNewsMessage(String toUserName,String fromUserName) {
+    public static String initNewsMessage(String toUserName,String fromUserName) {
         String message = null;
         List<News> newsList = new ArrayList<News>();
         NewsMessage newsMessage = new NewsMessage();
@@ -149,62 +142,39 @@ public class MessageUtil extends DefaultService{
 
     /**
      *  发送模板消息
-     * @param touser openid
-     * @param name   设备名称
-     * @param number 设备编号
-     * @param status 设备状态
+     * @param access_token token
+     * @param templateNews 模板消息
      */
-    public void pushTemplateNews(String touser,String name,String number,String status) {
-        TreeMap<String,TreeMap<String,String>> params = new TreeMap<String,TreeMap<String,String>>();
-        params.put("title",TemplateNews.item("您平台的设备出现异常状况！",TEXT_COLOR));
-        params.put("name",TemplateNews.item(name,TEXT_COLOR));
-        params.put("number",TemplateNews.item(number,TEXT_COLOR));
-        params.put("status",TemplateNews.item(status,TEXT_COLOR));
-        TemplateNews templateNews = new TemplateNews();
-        templateNews.setTemplate_id(Templave_Id);
-        templateNews.setTouser(touser);
-        templateNews.setData(params);
+    public static int pushTemplateNews(String access_token, TemplateNews templateNews) {
+        // 打印请求信息
+        String url = TemplateNews_URL.replace("ACCESS_TOKEN",access_token);
+        System.out.println("URL of Sending Template News : " + url);
+        String body = JsonUtil.toJsonString(templateNews);
+        System.out.println("Template News Body : " + body);
 
-        AccessToken access_token = weixinUtil.getAccessToken();
-        System.out.println("access_token : " + access_token);
-
-        String data = JsonUtil.toJsonString(templateNews);
-        System.out.println("data: " + data);
-
-        String url = TemplateNews_URL.replace("ACCESS_TOKEN",access_token.getAccess_token());
-        System.out.println("send_message_url: " + url);
         try {
-            weixinUtil.doPostStr(url,data);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
+            // 发送模板消息
+            JSONObject res = weixinUtil.doPostStr(url, body);
+            int errcode = res.getInteger("errcode");
+//            String errmsg = res.getString("errmsg");
+//            long msgid = res.getLong("msgid") ;  // sometimes missed
+            // 打印结果
+            System.out.print(res.toJSONString());
+            return errcode;
+//            if (errcode == 0) {
+//                return true;
+//            } else if (errcode == 43004) {  // 用户未关注公众号（取消关注）
+//                System.out.println("ERROR MSG:" + errmsg);
+//                return true;
+//            } else {
+//                System.out.println("ERROR MSG:" + errmsg);
+//                return false;
+//            }
+        }catch (ParseException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return -1;
     }
 }
-
-//    /*
-//     * 主菜单
-//     * */
-//    public static String menuText() {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("欢迎您的关注:\n\n");
-//        sb.append("回复1、微信公众号介绍\n\n");
-//        sb.append("回复2、开发者介绍\n\n");
-//        sb.append("回复?、调出帮助菜单。");
-//        return sb.toString();
-//    }
-//
-//    public static String firstMenu() {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("本公众号主要用于设备故障信息的推送反馈服务\n\n");
-//        return sb.toString();
-//    }
-//
-//    public static String secondMenu() {
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("测试Demo\n\n");
-//        return sb.toString();
-//    }

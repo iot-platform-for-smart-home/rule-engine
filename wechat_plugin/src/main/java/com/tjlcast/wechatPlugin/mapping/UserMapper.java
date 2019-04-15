@@ -1,6 +1,7 @@
 package com.tjlcast.wechatPlugin.mapping;
 
-import com.tjlcast.wechatPlugin.domain.wechat;
+
+import com.tjlcast.wechatPlugin.pojo.Auth;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -10,24 +11,35 @@ import java.util.List;
  */
 // 加上 Mapper 注解，在项目启动时可以扫描到
 @Mapper
-// 注册 mapper 接口
 public interface UserMapper {
+    @Results({
+            @Result(property = "unionid", column = "unionid"),
+            @Result(property = "mini_openid", column = "mini_openid"),
+            @Result(property = "oa_openid", column = "oa_openid")
+    })
 
-    @Select("select * from wechat")
-    List<wechat> findAll();
+    @Select("select * from auth where oa_openid = #{oa_openid}")
+    String selectByOaOpenid(@Param("oa_openid")String oa_openid);
 
-    @Select("select * from wechat where nickname = #{nickname}")  // 用 #{ param } 的形式支持动态 sql
-    wechat findByNickName(@Param("nickname") String nickname);  //  @Param中的参数名称要和 sql 语句中的参数名称一致
+    @Select("select oa_openid from auth where mini_openid = #{mini_openid}")
+    String selectOaOpenidByMiniOpenid(@Param("mini_openid")String mini_openid);
 
-    @Insert("insert into wechat(id, nickname, openId) values(#{id},#{nickname}, #{openid})")
-    int insert(@Param("id") String id, @Param("nickname") String nickname, @Param("openid") String openid);
+    @Select("select * from auth where unionid = #{unionid}")
+    Auth selectByUnionid(@Param("unionid")String unionid);
 
-    @Update("update wechat set openId=#{openid} where nickname=#{nickname}")
-    int updateOpenid(@Param("nickname") String nickname, @Param("openid") String openid);
+    @Insert("insert into auth(unionid,mini_openid,oa_openid) values(#{unionid},#{mini_openid},#{oa_openid})")
+    void insert(@Param("unionid")String unionid, @Param("mini_openid")String mini_openid, @Param("oa_openid")String oa_openid);
 
-    @Delete("delete from wechat where id=#{id}")
-    int delete(@Param("id") String id);
+    @Update("update auth set mini_openid = #{mini_openid} where unionid = #{unionid}")
+    void updateMiniOpenid(@Param("unionid")String unionid, @Param("mini_openid")String mini_openid);
 
+    @Update("update auth set oa_openid = #{oa_openid} where unionid = #{unionid}")
+    void updateOaOpenid(@Param("unionid")String unionid, @Param("oa_openid")String oa_openid);
 
+    @Select("select binder from user_relation where binded = #{customerid} and gateid LIKE CONCAT(CONCAT('%',#{gatewayid}),'%')")
+    List<Integer> selectAllCustomers(@Param("customerid") Integer customerid, @Param("gatewayid")String gatewayid);
+
+    @Select("select openid from user_new where id = #{customerid}")
+    String selectMiniOpenid(@Param("customerid")Integer customerid);
 
 }

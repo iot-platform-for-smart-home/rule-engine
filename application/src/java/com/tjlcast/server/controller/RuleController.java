@@ -258,9 +258,9 @@ public class RuleController extends BaseContoller {
     {
         List<Rule> rules = ruleService.findGatewayActiveAlarmRule(gatewayId);
         if(rules.size() == 0)
-            return true;
-        else
             return false;
+        else
+            return true;
     }
 
     @ApiOperation(value = "todo ***")
