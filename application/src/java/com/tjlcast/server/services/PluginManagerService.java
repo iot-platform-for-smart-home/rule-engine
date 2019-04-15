@@ -46,7 +46,7 @@ public class PluginManagerService implements InitializingBean {
 
         // update plugin's metrics （http from plugins） info to webscoket
         Observable
-                .interval(3, TimeUnit.SECONDS)
+                .interval(1, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(

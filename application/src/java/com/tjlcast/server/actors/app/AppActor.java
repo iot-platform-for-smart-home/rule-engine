@@ -51,7 +51,7 @@ public class AppActor extends ContextAwareActor {
             FromMsgMiddlerDeviceMsg mmessage = (FromMsgMiddlerDeviceMsg) message;
             String gatewayId = mmessage.getGatewayId();
             ActorRef orCreateGatewayActor = getOrCreateGatewayActor(gatewayId);
-            orCreateGatewayActor.tell(message,ActorRef.noSender()) ;
+            orCreateGatewayActor.tell(message,ActorRef.noSender());
         } else if (message instanceof Rule){
             Rule rule =(Rule)message;
             if(gatewayActors.containsKey(rule.getGatewayId())) {
