@@ -41,6 +41,10 @@ public class RuleService {
         return ruleMapper.getGatewayAlarmRule(gatewayId);
     }
 
+    public List<Integer> findGatewayAlarmRuleId(String gatewayId){
+        return ruleMapper.getGatewayAlarmRuleId(gatewayId);
+    }
+
     public List<Rule> findGatewayActiveAlarmRule(String gatewayId){
         return ruleMapper.getGatewayActiveAlarmRule(gatewayId);
     }

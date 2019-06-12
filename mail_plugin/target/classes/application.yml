@@ -1,0 +1,8 @@
+server:
+    port: 8300
+
+spring:
+  application:
+    name: MailPlugin
+  profiles:
+    active: prod

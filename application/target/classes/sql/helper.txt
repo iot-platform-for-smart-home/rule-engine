@@ -1,0 +1,8 @@
+mysql的数据库[表]导出
+
+[case No.1]
+mysqldump -u root -p database table > dump.txt
+password ******
+
+
+

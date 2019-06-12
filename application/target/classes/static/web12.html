@@ -1,0 +1,50 @@
+<script src="js/sockjs.min.js"></script>
+<script src="js/stomp.min.js"></script>
+<script>
+    var stompClient = null;
+
+    alert("begin!") ;
+
+    // 开启socket连接
+    function connect() {
+        var socket = new SockJS('http://39.104.189.84:30080/api/v1/smartruler/socket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect(
+            {}
+            , function () {
+            alert("Connected!") ;
+            alert("begin to send") ;
+            stompClient.send("/plugins/metrics/details", {}, "mailplugin:8300") ;
+
+            var res = stompClient.subscribe("/plugins/metrics/response/mailplugin/8300", function(frame){
+                alert(frame) ;
+            }) ;
+            alert(res) ;
+        });
+    }
+
+    // 断开socket连接
+    function disconnect() {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+        setConnected(falses);
+        alert("Disconnected");
+    }
+
+    // 向‘/app/change-notice’服务端发送消息
+    function sendName() {
+        var value = "hello tjlcast.";
+        alert("send" + value) ;
+        stompClient.send("/app/change-notice", {}, value);
+    }
+
+    function subscribe_app() {
+        stompClient.subscribe("/app/app_subscribe", function(frame){
+            alert(frame) ;
+        })
+    }
+
+    connect() ;
+
+</script>

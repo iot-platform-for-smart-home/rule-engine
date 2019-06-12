@@ -32,6 +32,9 @@ public interface RuleMapper {
     @Select("select * from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\"")
     List<Rule> getGatewayAlarmRule(@Param("gatewayId")String gatewayId);
 
+    @Select("select ruleId from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\"")
+    List<Integer> getGatewayAlarmRuleId(@Param("gatewayId")String gatewayId);
+
     @Select("select * from rule where gatewayId=#{gatewayId} and rule_type=\"alarm\" and state = \"ACTIVE\"")
     List<Rule> getGatewayActiveAlarmRule(@Param("gatewayId")String gatewayId);
 

@@ -1,0 +1,84 @@
+2018-12-04 15:51:07 [main] INFO  com.tjlcast.wechatPlugin.Application - "Starting Application on DESKTOP-NGTMN3P with PID 9348 (started by shixian in E:\IntelliJ IDEA 2018.1.6\repository\Gantch-ruler)"
+2018-12-04 15:51:07 [main] DEBUG com.tjlcast.wechatPlugin.Application - "Running with Spring Boot v1.5.6.RELEASE, Spring v4.3.4.RELEASE"
+2018-12-04 15:51:07 [main] INFO  com.tjlcast.wechatPlugin.Application - "The following profiles are active: prod"
+2018-12-04 15:51:07 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - "Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4c12331b: startup date [Tue Dec 04 15:51:07 CST 2018]; root of context hierarchy"
+2018-12-04 15:51:07 [background-preinit] INFO  o.h.validator.internal.util.Version - "HV000001: Hibernate Validator 5.3.5.Final"
+2018-12-04 15:51:09 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - "Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [class org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$61bd410a] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)"
+2018-12-04 15:51:10 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer - "Tomcat initialized with port(s): 8900 (http)"
+2018-12-04 15:51:10 [main] INFO  o.a.catalina.core.StandardService - "Starting service [Tomcat]"
+2018-12-04 15:51:10 [main] INFO  o.a.catalina.core.StandardEngine - "Starting Servlet Engine: Apache Tomcat/8.5.16"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - "Initializing Spring embedded WebApplicationContext"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader - "Root WebApplicationContext: initialization completed in 3043 ms"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.b.w.s.ServletRegistrationBean - "Mapping servlet: 'dispatcherServlet' to [/]"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'characterEncodingFilter' to: [/*]"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'hiddenHttpMethodFilter' to: [/*]"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'httpPutFormContentFilter' to: [/*]"
+2018-12-04 15:51:10 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'requestContextFilter' to: [/*]"
+2018-12-04 15:51:11 [main] WARN  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - "Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'checkStateAspect': Unsatisfied dependency expressed through field 'service'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.tjlcast.basePlugin.service.DefaultService<?, ?>' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}"
+2018-12-04 15:51:11 [main] INFO  o.a.catalina.core.StandardService - "Stopping service [Tomcat]"
+2018-12-04 15:51:11 [localhost-startStop-1] WARN  o.a.c.loader.WebappClassLoaderBase - "The web application [ROOT] appears to have started a thread named [Abandoned connection cleanup thread] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.lang.Object.wait(Native Method)
+ java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+ com.mysql.jdbc.AbandonedConnectionCleanupThread.run(AbandonedConnectionCleanupThread.java:43)"
+2018-12-04 15:51:11 [main] INFO  o.s.b.a.l.AutoConfigurationReportLoggingInitializer - "
+
+Error starting ApplicationContext. To display the auto-configuration report re-run your application with 'debug' enabled."
+2018-12-04 15:51:11 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - "
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field service in com.tjlcast.basePlugin.aop.CheckStateAspect required a bean of type 'com.tjlcast.basePlugin.service.DefaultService' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.tjlcast.basePlugin.service.DefaultService' in your configuration.
+"
+2018-12-04 15:53:56 [main] INFO  com.tjlcast.wechatPlugin.Application - "Starting Application on DESKTOP-NGTMN3P with PID 3552 (started by shixian in E:\IntelliJ IDEA 2018.1.6\repository\Gantch-ruler)"
+2018-12-04 15:53:56 [main] DEBUG com.tjlcast.wechatPlugin.Application - "Running with Spring Boot v1.5.6.RELEASE, Spring v4.3.4.RELEASE"
+2018-12-04 15:53:56 [main] INFO  com.tjlcast.wechatPlugin.Application - "The following profiles are active: prod"
+2018-12-04 15:53:56 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - "Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4c12331b: startup date [Tue Dec 04 15:53:56 CST 2018]; root of context hierarchy"
+2018-12-04 15:53:56 [background-preinit] INFO  o.h.validator.internal.util.Version - "HV000001: Hibernate Validator 5.3.5.Final"
+2018-12-04 15:53:58 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - "Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [class org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$e10bf005] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)"
+2018-12-04 15:53:58 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer - "Tomcat initialized with port(s): 8900 (http)"
+2018-12-04 15:53:58 [main] INFO  o.a.catalina.core.StandardService - "Starting service [Tomcat]"
+2018-12-04 15:53:58 [main] INFO  o.a.catalina.core.StandardEngine - "Starting Servlet Engine: Apache Tomcat/8.5.16"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - "Initializing Spring embedded WebApplicationContext"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader - "Root WebApplicationContext: initialization completed in 2950 ms"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.b.w.s.ServletRegistrationBean - "Mapping servlet: 'dispatcherServlet' to [/]"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'characterEncodingFilter' to: [/*]"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'hiddenHttpMethodFilter' to: [/*]"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'httpPutFormContentFilter' to: [/*]"
+2018-12-04 15:53:59 [localhost-startStop-1] INFO  o.s.b.w.s.FilterRegistrationBean - "Mapping filter: 'requestContextFilter' to: [/*]"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/v1/wechatplugin/verify],methods=[GET]}" onto public java.lang.String com.tjlcast.wechatPlugin.controller.WechatController.authGet(java.lang.String,java.lang.String,java.lang.String,java.lang.String)"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/v1/wechatplugin/sendTemplateMsg],methods=[POST]}" onto public void com.tjlcast.wechatPlugin.controller.WechatController.sendTemplateMsg(java.lang.String)"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/v1/wechatplugin/getAllUsers],methods=[GET]}" onto public int com.tjlcast.wechatPlugin.controller.WechatController.getAllUsers()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/plugin/state],methods=[GET]}" onto public java.lang.String com.tjlcast.basePlugin.controller.PluginController.getState()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/plugin/active],methods=[POST]}" onto public java.lang.String com.tjlcast.basePlugin.controller.PluginController.setActive()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/plugin/allUrls],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public java.util.List<java.lang.String> com.tjlcast.basePlugin.controller.PluginController.getAllUrls()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/plugin/metrics],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public java.lang.String com.tjlcast.basePlugin.controller.PluginController.getMetrics()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/api/plugin/suspend],methods=[POST]}" onto public java.lang.String com.tjlcast.basePlugin.controller.PluginController.setSuspend()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/v2/api-docs],methods=[GET],produces=[application/json || application/hal+json]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.swagger2.web.Swagger2Controller.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/swagger-resources/configuration/security]}" onto org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.SecurityConfiguration> springfox.documentation.swagger.web.ApiResourceController.securityConfiguration()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/swagger-resources/configuration/ui]}" onto org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.UiConfiguration> springfox.documentation.swagger.web.ApiResourceController.uiConfiguration()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/swagger-resources]}" onto org.springframework.http.ResponseEntity<java.util.List<springfox.documentation.swagger.web.SwaggerResource>> springfox.documentation.swagger.web.ApiResourceController.swaggerResources()"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping - "Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter - "Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4c12331b: startup date [Tue Dec 04 15:53:56 CST 2018]; root of context hierarchy"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - "Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]"
+2018-12-04 15:54:01 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - "Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]"
+2018-12-04 15:54:02 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping - "Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]"
+2018-12-04 15:54:02 [main] INFO  o.s.j.e.a.AnnotationMBeanExporter - "Registering beans for JMX exposure on startup"
+2018-12-04 15:54:02 [main] INFO  o.s.c.s.DefaultLifecycleProcessor - "Starting beans in phase 2147483647"
+2018-12-04 15:54:02 [main] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - "Context refreshed"
+2018-12-04 15:54:02 [main] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - "Found 1 custom documentation plugin(s)"
+2018-12-04 15:54:02 [main] INFO  s.d.s.w.s.ApiListingReferenceScanner - "Scanning for api listing references"
+2018-12-04 15:54:03 [main] INFO  o.a.coyote.http11.Http11NioProtocol - "Initializing ProtocolHandler ["http-nio-8900"]"
+2018-12-04 15:54:03 [main] INFO  o.a.coyote.http11.Http11NioProtocol - "Starting ProtocolHandler ["http-nio-8900"]"
+2018-12-04 15:54:03 [main] INFO  o.a.tomcat.util.net.NioSelectorPool - "Using a shared selector for servlet write/read"
+2018-12-04 15:54:03 [main] INFO  o.s.b.c.e.t.TomcatEmbeddedServletContainer - "Tomcat started on port(s): 8900 (http)"
+2018-12-04 15:54:03 [main] INFO  com.tjlcast.wechatPlugin.Application - "Started Application in 7.729 seconds (JVM running for 9.497)"

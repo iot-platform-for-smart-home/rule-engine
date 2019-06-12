@@ -1,0 +1,25 @@
+server:
+    port: 8900
+
+spring:
+  application:
+    name: WechatPlugin
+  profiles:
+    active: prod
+  datasource:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://118.190.202.148:3306/BUPT_IOT?characterEncoding=UTF-8
+    username: root
+    password: Gantch815
+#    cachePrepStmts: true #开启二级缓存
+
+mybatis:
+  configuration:
+    cache-enabled: true
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: false
+    mutiple-result-sets-enabled: true
+    default-executor-type: reuse
+    default-statement-type: 25000
+  type-aliases-package:  com.tjlcast.wechatPlugin.mapping
+  type-handlers-package:  com.tjlcast.server.typeHandler

@@ -23,3 +23,6 @@ mybatis:
     default-statement-type: 25000
   type-aliases-package:  com.tjlcast.wechatPlugin.mapping
   type-handlers-package:  com.tjlcast.server.typeHandler
+
+wechatConfig:
+  accesstoken:

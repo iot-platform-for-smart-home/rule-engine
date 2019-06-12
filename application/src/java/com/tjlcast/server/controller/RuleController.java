@@ -1,7 +1,11 @@
 package com.tjlcast.server.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mysql.jdbc.exceptions.MySQLDataException;
+import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 import com.tjlcast.server.data.*;
 import com.tjlcast.server.data_source.DataSourceProcessor;
 import com.tjlcast.server.data_source.RuleCreation;
@@ -12,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import scala.Int;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -179,6 +184,65 @@ public class RuleController extends BaseContoller {
 
         return "OK" ;
     }
+
+    // 根据网关删除规则
+    @ApiOperation(value = "todo ***")
+    //@PreAuthorize("#oauth2.hasScope('all') OR hasAuthority('TENANT_ADMIN')")
+    @RequestMapping(value = "/removeRules/{gatewayId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String removeRuleByGatewayId(@PathVariable("gatewayId")String gatewayId){
+        List<Rule> rules = ruleService.findRuleByGatewayId(gatewayId);
+        for(Rule rule : rules) {
+            Integer ruleId = rule.getRuleId();
+            try{
+                List<Filter> filters = filterService.findFilterByRuleId(Integer.valueOf(ruleId));
+                List<Transform> transforms = transformService.getByRuleId(Integer.valueOf(ruleId));
+
+                rule2FilterService.removeRelation(Integer.valueOf(ruleId));
+                rule2TransformService.removeRelation(Integer.valueOf(ruleId));
+
+                for (Filter filter : filters) {
+                    filterService.removeAFilter(filter.getFilterId());
+                }
+
+                for (Transform transform : transforms) {
+                    transformService.deleteById(transform.getTransformId());
+                }
+
+                ruleService.removeARule(Integer.valueOf(ruleId));
+
+                ifRuleDeleteOrChange(rule);
+            } catch (Exception e){
+                e.printStackTrace();
+                return "Fail";
+            }
+        }
+        return "OK";
+    }
+
+    // 用户解绑网关时，修改网关对应的调用微信插件的规则，所对应的transform的请求体中的customerId
+    @RequestMapping(value = "/rule/transform/updateCustomer/{gatewayId}", method = RequestMethod.PUT)
+    public void update_transform_customerid(@PathVariable("gatewayId")String gatewayId){
+        // 查找报警规则
+        List<Integer> rules = ruleService.findGatewayAlarmRuleId(gatewayId);
+
+        // 查找规则对应的transforms
+        List<Transform> transforms = new ArrayList<>();
+        for (Integer rule :rules) {
+            transforms.addAll(transformService.getByRuleId(rule));
+        }
+
+        // 修改customerid
+        for (Transform transform : transforms) {
+            JSONObject requestBody = JSONObject.parseObject(transform.getRequestBody());
+            requestBody.put("customerId", 0);
+            transform.setRequestBody(requestBody.toJSONString());
+            transformService.updataTransform(transform);
+        }
+    }
+
+    // 用户绑定网关时
+
 
     //GET 获取全部规则
     @ApiOperation(value = "todo ***")
